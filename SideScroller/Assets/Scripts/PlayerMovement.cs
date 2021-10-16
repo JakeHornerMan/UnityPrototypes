@@ -5,9 +5,9 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private LayerMask platformLayerMask;
-    public Rigidbody2D rb;
-    public CapsuleCollider2D cc;
-    public Animator anim;
+    private Rigidbody2D rb;
+    private CapsuleCollider2D cc;
+    private Animator anim;
     
     public float speed = 10;
     public float jumpForce = 10;
@@ -22,6 +22,7 @@ public class PlayerMovement : MonoBehaviour
     {
         rb= this.GetComponent<Rigidbody2D>();
         anim= this.GetComponent<Animator>();
+        cc= this.GetComponent<CapsuleCollider2D>();
 
         facingRight = true;
     }
