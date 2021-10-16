@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private LayerMask platformLayerMask;
     public Rigidbody2D rb;
     public CapsuleCollider2D cc;
+    public Animator anim;
     
     public float speed = 10;
     public float jumpForce = 10;
@@ -20,6 +21,7 @@ public class PlayerMovement : MonoBehaviour
     public void Start()
     {
         rb= this.GetComponent<Rigidbody2D>();
+        anim= this.GetComponent<Animator>();
 
         facingRight = true;
     }
@@ -27,6 +29,20 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         PlayerMove();
+        SetAnim();
+    }
+
+    public void SetAnim(){
+        anim.SetInteger("State", (int)action);
+        if (rb.velocity.y < .1f && IsGrounded() == false){
+            action = State.fall;
+        }
+        else if (rb.velocity.y > .1f && IsGrounded() == false){
+            action = State.jump;
+        }
+        else if(IsGrounded() == true){
+            action = State.idle;
+        }
     }
 
     public void PlayerMove(){
@@ -35,18 +51,26 @@ public class PlayerMovement : MonoBehaviour
     }
 
     public void Move(){
-        if (Input.GetKey(KeyCode.A))
-        {
+        if (Input.GetKey(KeyCode.A)){
+            if(IsGrounded()){
+                action = State.run;
+            }
             rb.velocity = new Vector2(-speed, rb.velocity.y);
             transform.localScale = new Vector2(-1, 1);
             facingRight = false;
         }
         else if (Input.GetKey(KeyCode.D)){
+            if(IsGrounded()){
+                action = State.run;
+            }
             rb.velocity = new Vector2(+speed, rb.velocity.y);
             transform.localScale = new Vector2(1, 1);
             facingRight = true;
         }
         else {
+            if(IsGrounded()){
+                action = State.idle;
+            }
             rb.velocity = new Vector2(0, rb.velocity.y);
         }
     }
