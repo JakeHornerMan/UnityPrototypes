@@ -30,21 +30,11 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         PlayerMove();
-        //SetAnim();
-        anim.SetInteger("State", (int)action);
+        SetAnim();
     }
 
     public void SetAnim(){
-        
-        if (rb.velocity.y < .1f && IsGrounded() == false){
-            action = State.fall;
-        }
-        else if (rb.velocity.y > .1f && IsGrounded() == false){
-            action = State.jump;
-        }
-        else if(IsGrounded() == true){
-            action = State.idle;
-        }
+        anim.SetInteger("State", (int)action);
     }
 
     public void PlayerMove(){
@@ -79,11 +69,13 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(){
         if (Input.GetKey(KeyCode.W) && IsGrounded()){
+            isJumping = true;
             rb.velocity = Vector2.up * jumpForce;
             jumpTimeCounter = jumpTime;
         }
 
-        if (Input.GetKeyDown(KeyCode.W) && isJumping ==true){
+        //hold to jump higher (not working)
+        /*if (Input.GetKey(KeyCode.W) && isJumping ==true){
             if(jumpTimeCounter > 0){
                 rb.velocity = Vector2.up * jumpForce;
                 jumpTimeCounter -= Time.deltaTime;
@@ -95,7 +87,7 @@ public class PlayerMovement : MonoBehaviour
         
         if(Input.GetKeyUp(KeyCode.W)){
             isJumping = false;
-        }
+        }*/
     }
 
     private bool IsGrounded() {
