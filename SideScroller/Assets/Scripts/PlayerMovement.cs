@@ -30,11 +30,12 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         PlayerMove();
-        SetAnim();
+        //SetAnim();
+        anim.SetInteger("State", (int)action);
     }
 
     public void SetAnim(){
-        anim.SetInteger("State", (int)action);
+        
         if (rb.velocity.y < .1f && IsGrounded() == false){
             action = State.fall;
         }
@@ -114,7 +115,13 @@ public class PlayerMovement : MonoBehaviour
         }
         else {
             rayColor = Color.green;
-            //Debug.Log("false");
+            if (rb.velocity.y < .1f) {
+                action = State.fall;
+            }
+            else if (rb.velocity.y > .1f) {
+                action = State.jump;
+
+            }
             return false;
         }
     }
