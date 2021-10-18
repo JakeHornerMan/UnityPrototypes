@@ -2,34 +2,36 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
     [SerializeField] private LayerMask platformLayerMask;
     private Rigidbody2D rb;
     private CapsuleCollider2D cc;
     private Animator anim;
+
+    private PlayerCombat pc;
     
     public float speed = 10;
-    public float jumpForce = 10;
-    private float jumpTimeCounter; 
-    public float jumpTime;
-    private bool isJumping;
-    private bool facingRight;
+    public float jumpForce = 16;
+    public float fallMultiplier = 5.0f;
+    public float lowJumpMultiplier = 5.0f;
+    private bool facingRight = true;
     private enum State{idle,run,jump,fall}
     private State action;
 
+
     public void Start()
     {
-        rb= this.GetComponent<Rigidbody2D>();
-        anim= this.GetComponent<Animator>();
-        cc= this.GetComponent<CapsuleCollider2D>();
-
-        facingRight = true;
+        rb = this.GetComponent<Rigidbody2D>();
+        anim = this.GetComponent<Animator>();
+        cc = this.GetComponent<CapsuleCollider2D>();
+        pc = this.GetComponent<PlayerCombat>();
     }
 
-    void FixedUpdate()
+    void Update()
     {
         PlayerMove();
+        PlayerAttack();
         SetAnim();
     }
 
@@ -39,7 +41,13 @@ public class PlayerMovement : MonoBehaviour
 
     public void PlayerMove(){
         Move();
-        Jump();
+        Jump(); 
+    }
+
+    public void PlayerAttack(){
+        if(Input.GetKeyDown(KeyCode.Space)){
+            pc.BasicHit();
+        }
     }
 
     public void Move(){
@@ -69,25 +77,16 @@ public class PlayerMovement : MonoBehaviour
 
     public void Jump(){
         if (Input.GetKey(KeyCode.W) && IsGrounded()){
-            isJumping = true;
             rb.velocity = Vector2.up * jumpForce;
-            jumpTimeCounter = jumpTime;
         }
 
-        //hold to jump higher (not working)
-        /*if (Input.GetKey(KeyCode.W) && isJumping ==true){
-            if(jumpTimeCounter > 0){
-                rb.velocity = Vector2.up * jumpForce;
-                jumpTimeCounter -= Time.deltaTime;
-            }
-            else{
-                isJumping = false;
-            }
+        //using gravity for hold jump and to fall faster
+        if(rb.velocity.y<0){
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (fallMultiplier-1) * Time.deltaTime;
         }
-        
-        if(Input.GetKeyUp(KeyCode.W)){
-            isJumping = false;
-        }*/
+        else if (rb.velocity.y > 0 && !Input.GetKey(KeyCode.W)){
+            rb.velocity += Vector2.up * Physics2D.gravity.y * (lowJumpMultiplier-1) * Time.deltaTime;
+        }
     }
 
     private bool IsGrounded() {
@@ -102,18 +101,17 @@ public class PlayerMovement : MonoBehaviour
             action = State.idle;
             rayColor = Color.green;
             //Debug.Log("true");
-            isJumping = false;
             return true;
         }
         else {
-            rayColor = Color.green;
-            if (rb.velocity.y < .1f) {
+            if (rb.velocity.y < 0) {
                 action = State.fall;
             }
-            else if (rb.velocity.y > .1f) {
+            else if (rb.velocity.y > 0) {
                 action = State.jump;
 
             }
+            rayColor = Color.green;
             return false;
         }
     }
