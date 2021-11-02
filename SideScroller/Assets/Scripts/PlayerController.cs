@@ -48,10 +48,6 @@ public class PlayerController : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.Space)){
             pc.BasicHit();
         }
-
-        if(Input.GetKeyDown(KeyCode.Mouse0)){
-            pc.BasicBullet();
-        }
     }
 
     public void Move(){

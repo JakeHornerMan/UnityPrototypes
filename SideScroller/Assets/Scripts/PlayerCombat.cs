@@ -13,33 +13,9 @@ public class PlayerCombat : MonoBehaviour
     public float basicHitTime = 0.33f;
     public LayerMask enemyLayers;
 
-    public Transform firePoint;
-    private Vector2 lookDirection;
-    private float lookAngle;
-    public GameObject standardBullet;
-    public float standardBulletSpeed = 30f;
-
     void Start()
     {
        anim = this.GetComponent<Animator>();
-    }
-
-    public void Update(){
-        Shoot();
-    }
-
-    public void Shoot(){
-        lookDirection =Camera.main.WorldToScreenPoint(Input.mousePosition);
-        lookAngle = Mathf.Atan2(lookDirection.y, lookDirection.x) * Mathf.Rad2Deg;
-        firePoint.rotation = Quaternion.Euler(0,0,lookAngle);
-        
-        if(Input.GetMouseButtonDown(0)){
-            GameObject bullet = Instantiate(standardBullet);
-            bullet.transform.position = firePoint.position;
-            bullet.transform.rotation = Quaternion.Euler(0,0,lookAngle);
-
-            bullet.GetComponent<Rigidbody2D>().velocity = firePoint.right * standardBulletSpeed;
-        }
     }
 
     public void BasicHit(){
@@ -55,11 +31,11 @@ public class PlayerCombat : MonoBehaviour
         yield return new WaitForSeconds(_waitTime);
     }
 
-    public void BasicBullet(){
+    /*public void BasicBullet(){
         GameObject bullet = Instantiate(standardBullet);
         bullet.transform.position = firePoint.position;
         bullet.transform.rotation = Quaternion.Euler(0,0,lookAngle);
 
         bullet.GetComponent<Rigidbody2D>().velocity = firePoint.right * standardBulletSpeed;
-    }
+    }*/
 }
