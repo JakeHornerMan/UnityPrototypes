@@ -58,6 +58,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(-speed, rb.velocity.y);
             transform.localScale = new Vector2(-1, 1);
             facingRight = false;
+            FindObjectOfType<TurretFollow>().faceDirection(facingRight);
         }
         else if (Input.GetKey(KeyCode.D)){
             if(IsGrounded()){
@@ -66,6 +67,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(+speed, rb.velocity.y);
             transform.localScale = new Vector2(1, 1);
             facingRight = true;
+            FindObjectOfType<TurretFollow>().faceDirection(facingRight);
         }
         else {
             if(IsGrounded()){

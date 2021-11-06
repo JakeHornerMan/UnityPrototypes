@@ -4,37 +4,31 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
-    public float offset = 0;
+    public Transform firePoint;
+
     public enum State { pistol, machinegun, disabled }
     public State gunState = State.pistol;
+
     public GameObject standardBullet;
-    public GameObject firePoint;
+    public float standardBulletForce = 20f;
 
     void Update()
     {
-        GunRotation();
-        Shoot();
-    }
-
-    public void GunRotation(){
-        Vector3 difference = Camera.main.ScreenToWorldPoint(Input.mousePosition)- transform.position;
-        float rotZ = Mathf.Atan2(difference.x, difference.y) * -Mathf.Rad2Deg; 
-        transform.rotation = Quaternion.Euler(0f, 0f, rotZ + offset);
-    }
-
-    public void Shoot(){
-        if (Input.GetMouseButtonDown(0)){
-            if(gunState == State.pistol){
-                PistolBullet();
-            }
+        if (Input.GetButtonDown("Fire1")){
+            Shoot();
         }
     }
 
-    public void PistolBullet(){
-        GameObject bullet = Instantiate(standardBullet,firePoint.transform.position, transform.rotation);
-        bullet.transform.position = firePoint.transform.position;
-    
-
-        //bullet.GetComponent<Rigidbody2D>().velocity = firePoint.right * standardBulletSpeed;
+    public void Shoot(){
+        if(gunState == State.pistol){
+            StandardBullet();
+        }
     }
+
+    public void StandardBullet(){
+        GameObject bullet = Instantiate(standardBullet, firePoint.position, firePoint.rotation);
+        Rigidbody2D rbBullet = bullet.GetComponent<Rigidbody2D>();
+        rbBullet.AddForce(firePoint.right * standardBulletForce, ForceMode2D.Impulse);
+    }
+
 }
