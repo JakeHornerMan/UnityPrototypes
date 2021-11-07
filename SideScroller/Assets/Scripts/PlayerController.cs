@@ -117,4 +117,9 @@ public class PlayerController : MonoBehaviour
             return false;
         }
     }
+
+    public bool isTouchingWall(){
+        //Physics2D.Raycast
+        return false;
+    }
 }
