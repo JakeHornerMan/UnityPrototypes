@@ -10,14 +10,29 @@ public class PlayerController : MonoBehaviour
     private Animator anim;
 
     private PlayerCombat pc;
-    
+
+    private bool disableMove;
+
+    private enum State{idle,run,jump,fall,wallSlide}
+    private State action;
     public float speed = 10;
+
+    //Jumping
+    public Transform groundCheck;
+    public float checkRadius;
     public float jumpForce = 16;
     public float fallMultiplier = 5.0f;
     public float lowJumpMultiplier = 5.0f;
     private bool facingRight = true;
-    private enum State{idle,run,jump,fall}
-    private State action;
+    
+
+    //WallSlide 
+    public Transform wallCheck;
+    public float wallCheckDistance;
+    public float wallSlideSpeed;
+    public float xWallJumpForce = 10f;
+    public float yWallJumpForce = 10f;
+    public float walljumpTime;
 
 
     public void Start()
@@ -26,11 +41,13 @@ public class PlayerController : MonoBehaviour
         anim = this.GetComponent<Animator>();
         cc = this.GetComponent<CapsuleCollider2D>();
         pc = this.GetComponent<PlayerCombat>();
+        EnableMove();
     }
 
     void Update()
     {
         PlayerMove();
+        
         PlayerAttack();
         SetAnim();
     }
@@ -40,8 +57,17 @@ public class PlayerController : MonoBehaviour
     }
 
     public void PlayerMove(){
-        Move();
-        Jump(); 
+        if(disableMove==false){
+            if( IsTouchingWall() != true|| IsTouchingWall() != true && IsGrounded() != true || IsGrounded() == true ){
+                Move();
+            }
+        }
+        
+        Jump();
+
+        WallSlide();
+        
+        WallJump();
     }
 
     public void PlayerAttack(){
@@ -58,6 +84,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(-speed, rb.velocity.y);
             transform.localScale = new Vector2(-1, 1);
             facingRight = false;
+            wallCheckDistance = -0.7f;
             FindObjectOfType<TurretFollow>().faceDirection(facingRight);
         }
         else if (Input.GetKey(KeyCode.D)){
@@ -67,6 +94,7 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(+speed, rb.velocity.y);
             transform.localScale = new Vector2(1, 1);
             facingRight = true;
+            wallCheckDistance = 0.7f;
             FindObjectOfType<TurretFollow>().faceDirection(facingRight);
         }
         else {
@@ -91,21 +119,39 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void WallSlide(){
+        
+        if(IsTouchingWall() ==true && IsGrounded() == false){
+            rb.velocity = new Vector2(rb.velocity.x, Mathf.Clamp(rb.velocity.y, -wallSlideSpeed, float.MaxValue));
+            action = State.fall;
+        }
+    }
+
+    public void WallJump(){
+        
+        if(IsWallJumping() == true && Input.GetKey(KeyCode.D) && facingRight == false){
+            rb.velocity = new Vector2(xWallJumpForce,yWallJumpForce);
+            DisableMove(0.15f);
+        }
+        if(IsWallJumping() == true && Input.GetKey(KeyCode.A) && facingRight == true){
+            rb.velocity = new Vector2(-xWallJumpForce,yWallJumpForce);
+            DisableMove(0.15f);
+        }
+        
+    }
+
     private bool IsGrounded() {
 
-        float extraHeightText = 0.1f;
-        RaycastHit2D raycastHit = 
-            Physics2D.BoxCast(cc.bounds.center, cc.bounds.size, 0f, Vector2.down, extraHeightText, platformLayerMask);
-            Color rayColor;
+        bool isGrounded = Physics2D.OverlapCircle(groundCheck.position,checkRadius,platformLayerMask);
 
-        if (raycastHit.collider != null)
+        if (isGrounded == true)
         {
             action = State.idle;
-            rayColor = Color.green;
             //Debug.Log("true");
             return true;
         }
         else {
+            //Debug.Log("false");
             if (rb.velocity.y < 0) {
                 action = State.fall;
             }
@@ -113,13 +159,41 @@ public class PlayerController : MonoBehaviour
                 action = State.jump;
 
             }
-            rayColor = Color.green;
-            return false;
         }
+        return isGrounded;
     }
 
-    public bool isTouchingWall(){
-        //Physics2D.Raycast
-        return false;
+    public bool IsTouchingWall(){
+        bool touchingWall = Physics2D.Raycast(wallCheck.position, transform.right, wallCheckDistance, platformLayerMask);
+
+        return touchingWall;
+    }
+
+    public bool IsWallJumping(){
+        bool walljumping = false; 
+        if(Input.GetKey(KeyCode.W) && IsTouchingWall()){
+            walljumping = true;
+        }
+        else {
+            walljumping = false;
+        }
+        return walljumping;
+
+    }
+
+    public void DisableMove(float time){
+        disableMove = true;
+        Invoke("EnableMove", time);
+    }
+
+    public void EnableMove(){
+        disableMove = false;
+    }
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.red;
+        //Gizmos.DrawLine(cc.bounds.center,new Vector2(cc.bounds.center.x,cc.bounds.center.y-0.8f));
+        //Gizmos.DrawLine(cc.bounds.center,new Vector2(cc.bounds.center.x+0.8f,cc.bounds.center.y));
+        Gizmos.DrawLine(wallCheck.position,new Vector2(wallCheck.position.x + wallCheckDistance,wallCheck.position.y));
     }
 }
