@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class RotateGun : MonoBehaviour
 {
-    public Camera cam;
+    private Camera cam;
     private Rigidbody2D rb;
     private Vector2 mousePos;
 
@@ -12,6 +12,7 @@ public class RotateGun : MonoBehaviour
 
     public void Start(){
         rb = this.GetComponent<Rigidbody2D>();
+        cam = Camera.main;
     }
 
     public void Update()

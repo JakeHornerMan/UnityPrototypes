@@ -34,6 +34,17 @@ public class PlayerController : MonoBehaviour
     public float yWallJumpForce = 10f;
     public float walljumpTime;
 
+    //LedgeClimb
+    /*
+    public Transform ledgeCheck;
+    public float xledgeOffset1 = 0.5f;
+    public float yledgeOffset1 = 0.3f;
+    public float xledgeOffset2 = 0f;
+    public float yledgeOffset2 = 0.5f;
+    public Vector2 ledgePos1;
+    public Vector2 ledgePos2;
+    */
+
 
     public void Start()
     {
@@ -57,6 +68,8 @@ public class PlayerController : MonoBehaviour
     }
 
     public void PlayerMove(){
+        IsGrappling();
+
         if(disableMove==false){
             if( IsTouchingWall() != true|| IsTouchingWall() != true && IsGrounded() != true || IsGrounded() == true ){
                 Move();
@@ -68,6 +81,8 @@ public class PlayerController : MonoBehaviour
         WallSlide();
         
         WallJump();
+
+        //LedgeClimb();
     }
 
     public void PlayerAttack(){
@@ -178,7 +193,16 @@ public class PlayerController : MonoBehaviour
             walljumping = false;
         }
         return walljumping;
+    }
 
+    public void IsGrappling(){
+        bool isGrappling = this.GetComponent<GrapplingGun>().isGrappling;
+        if (isGrappling == true) {
+            disableMove = true;
+        }
+        else {
+            disableMove = false;
+        }
     }
 
     public void DisableMove(float time){
@@ -196,4 +220,32 @@ public class PlayerController : MonoBehaviour
         //Gizmos.DrawLine(cc.bounds.center,new Vector2(cc.bounds.center.x+0.8f,cc.bounds.center.y));
         Gizmos.DrawLine(wallCheck.position,new Vector2(wallCheck.position.x + wallCheckDistance,wallCheck.position.y));
     }
+
+    /*
+    public void LedgeClimb(){
+        if(IsTouchingWall()== true && IsTouchingLedge() == false){
+            Vector2 ledgePosBot = wallCheck.position;
+            if(facingRight == true){
+                ledgePos1 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) - xledgeOffset1 , Mathf.Floor(ledgePosBot.y) + yledgeOffset1);
+                ledgePos2 = new Vector2(Mathf.Floor(ledgePosBot.x + wallCheckDistance) + xledgeOffset2 , Mathf.Floor(ledgePosBot.y) + yledgeOffset2);
+            }
+            else if (facingRight == false){
+                ledgePos1 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) + xledgeOffset1, Mathf.Floor(ledgePosBot.y) + yledgeOffset1);
+                ledgePos2 = new Vector2(Mathf.Ceil(ledgePosBot.x - wallCheckDistance) - xledgeOffset1, Mathf.Floor(ledgePosBot.y) + yledgeOffset1);
+            }
+            DisableMove(0.3f);
+            anim.SetBool("ClimbLedge", true);
+            FinishLedge();
+        }
+    }
+    public void FinishLedge(){
+        transform.position = ledgePos2;
+        anim.SetBool("ClimbLedge", false);
+    }
+    public bool IsTouchingLedge(){
+        bool ledge = Physics2D.Raycast(ledgeCheck.position, transform.right, wallCheckDistance, platformLayerMask);
+        return ledge;
+    }
+    */
+
 }
