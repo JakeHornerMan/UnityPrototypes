@@ -68,7 +68,7 @@ public class PlayerController : MonoBehaviour
     }
 
     public void PlayerMove(){
-        IsGrappling();
+        
 
         if(disableMove==false){
             if( IsTouchingWall() != true|| IsTouchingWall() != true && IsGrounded() != true || IsGrounded() == true ){
@@ -96,21 +96,29 @@ public class PlayerController : MonoBehaviour
             if(IsGrounded()){
                 action = State.run;
             }
-            rb.velocity = new Vector2(-speed, rb.velocity.y);
+            if(IsTouchingWall() == true && facingRight == false){
+                return;
+            }else{
+                rb.velocity = new Vector2(-speed, rb.velocity.y);
             transform.localScale = new Vector2(-1, 1);
             facingRight = false;
             wallCheckDistance = -0.7f;
             FindObjectOfType<TurretFollow>().faceDirection(facingRight);
+            }
         }
         else if (Input.GetKey(KeyCode.D)){
             if(IsGrounded()){
                 action = State.run;
             }
-            rb.velocity = new Vector2(+speed, rb.velocity.y);
-            transform.localScale = new Vector2(1, 1);
-            facingRight = true;
-            wallCheckDistance = 0.7f;
-            FindObjectOfType<TurretFollow>().faceDirection(facingRight);
+            if(IsTouchingWall() == true && facingRight == true){
+                return;
+            }else{
+                rb.velocity = new Vector2(+speed, rb.velocity.y);
+                transform.localScale = new Vector2(1, 1);
+                facingRight = true;
+                wallCheckDistance = 0.7f;
+                FindObjectOfType<TurretFollow>().faceDirection(facingRight);
+            }
         }
         else {
             if(IsGrounded()){
@@ -195,19 +203,18 @@ public class PlayerController : MonoBehaviour
         return walljumping;
     }
 
-    public void IsGrappling(){
+    public bool IsGrappling(){
         bool isGrappling = this.GetComponent<GrapplingGun>().isGrappling;
-        if (isGrappling == true) {
-            disableMove = true;
-        }
-        else {
-            disableMove = false;
-        }
+        return isGrappling;
     }
 
     public void DisableMove(float time){
         disableMove = true;
         Invoke("EnableMove", time);
+    }
+
+    public void DisableMove(){
+        disableMove = true;
     }
 
     public void EnableMove(){
