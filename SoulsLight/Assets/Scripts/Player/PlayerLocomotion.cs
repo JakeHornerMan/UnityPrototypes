@@ -22,7 +22,11 @@ namespace JH
         [SerializeField]
         float movementSpeed = 5;
         [SerializeField]
+        float sprintSpeed = 8;
+        [SerializeField]
         float rotationSpeed = 10;
+
+        public bool isSprinting;
 
 
         void Start()
@@ -38,29 +42,56 @@ namespace JH
         public void Update(){
             float delta = Time.deltaTime;
 
+            isSprinting = inputHandler.b_Input;
+
             inputHandler.TickInput(delta);
+
+            HandleMovement(delta);
+
+            HandleRollingAndSprinting(delta);
+        }
+
+        #region Movement
+        Vector3 normalVector;
+        Vector3 targetPosition;
+
+        public void HandleMovement(float delta)
+        {
+            if(inputHandler.rollFlag){
+                return;
+            }
 
             moveDirection = cameraObject.forward * inputHandler.vertical;
             moveDirection += cameraObject.right * inputHandler.horizontal;
             moveDirection.Normalize();
             moveDirection.y = 0;
 
-            float speed = movementSpeed;
+            float speed;
+
+            if((inputHandler.horizontal < 0.55f && inputHandler.moveAmount < 0.6f) 
+                || (inputHandler.vertical < 0.55f && inputHandler.moveAmount < 0.6f) ){
+                speed = movementSpeed/2;
+            }
+            else{
+                speed = movementSpeed;
+            }
+
+            if(inputHandler.sprintFlag){
+                speed = sprintSpeed;
+                isSprinting = true;
+            }
+
             moveDirection *= speed;
 
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
             rigidbody.velocity = projectedVelocity;
 
-            animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0);
+            animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0, isSprinting);
 
             if(animatorHandler.canRotate == true){
                 HandleRotation(delta);
             }
         }
-
-        #region Movement
-        Vector3 normalVector;
-        Vector3 targetPosition;
 
         private void HandleRotation(float delta){
             Vector3 targetDir = Vector3.zero;
@@ -83,6 +114,31 @@ namespace JH
 
             myTransform.rotation = targetRotation;
         }
+
+        public void HandleRollingAndSprinting(float delta)
+        {
+            if(animatorHandler.anim.GetBool("isInteracting")){
+                return;
+            }
+
+            if(inputHandler.rollFlag){
+                moveDirection = cameraObject.forward *inputHandler.vertical;
+                moveDirection += cameraObject.right * inputHandler.horizontal;
+
+                if(inputHandler.moveAmount > 0){
+                    animatorHandler.PlayTargetAnimation("Dodge Roll", true);
+                    moveDirection.y = 0;
+                    Quaternion rollRotation = Quaternion.LookRotation(moveDirection);
+                    myTransform.rotation = rollRotation;
+                }
+                else{
+                    animatorHandler.PlayTargetAnimation("Dodge Backstep", true);
+                }
+            }
+        }
+
         #endregion
+
+        
     }
 }

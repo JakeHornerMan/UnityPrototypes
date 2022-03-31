@@ -112,6 +112,44 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Player Actions",
+            "id": "6aea9fb4-f561-4cc3-9b0e-6b6b7542c7d6",
+            "actions": [
+                {
+                    "name": "Dodge Roll",
+                    "type": "Button",
+                    "id": "d3a48fbe-9837-45df-b5a4-85ec774f2a77",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b371d82d-f5bc-43ce-a797-6b4ddf266ed5",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dodge Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c532146d-0a1f-4fdd-b67f-eedac2bd4e3c",
+                    "path": "<Keyboard>/shift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Dodge Roll",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": []
