@@ -8,6 +8,7 @@ namespace JH
     {
         Transform cameraObject;
         InputHandler inputHandler;
+        PlayerManager playerManager;
         Vector3 moveDirection;
 
         [HideInInspector]
@@ -18,7 +19,7 @@ namespace JH
         public new Rigidbody rigidbody;
         public GameObject normalCamera;
 
-        [Header("Stats")]
+        [Header("Movement Stats")]
         [SerializeField]
         float movementSpeed = 5;
         [SerializeField]
@@ -26,29 +27,17 @@ namespace JH
         [SerializeField]
         float rotationSpeed = 10;
 
-        public bool isSprinting;
 
 
         void Start()
         {
+            playerManager = GetComponent<PlayerManager>();
             rigidbody = GetComponent<Rigidbody>();
             inputHandler = GetComponent<InputHandler>();
             animatorHandler = GetComponentInChildren<AnimatorHandler>();
             cameraObject = Camera.main.transform;
             myTransform = transform;
             animatorHandler.Initialize();
-        }
-
-        public void Update(){
-            float delta = Time.deltaTime;
-
-            isSprinting = inputHandler.b_Input;
-
-            inputHandler.TickInput(delta);
-
-            HandleMovement(delta);
-
-            HandleRollingAndSprinting(delta);
         }
 
         #region Movement
@@ -68,8 +57,8 @@ namespace JH
 
             float speed;
 
-            if((inputHandler.horizontal < 0.55f && inputHandler.moveAmount < 0.6f) 
-                || (inputHandler.vertical < 0.55f && inputHandler.moveAmount < 0.6f) ){
+            if((inputHandler.horizontal < 0.55f && inputHandler.moveAmount < 0.5f) 
+                || (inputHandler.vertical < 0.55f && inputHandler.moveAmount < 0.5f) ){
                 speed = movementSpeed/2;
             }
             else{
@@ -78,7 +67,7 @@ namespace JH
 
             if(inputHandler.sprintFlag){
                 speed = sprintSpeed;
-                isSprinting = true;
+                playerManager.isSprinting = true;
             }
 
             moveDirection *= speed;
@@ -86,7 +75,7 @@ namespace JH
             Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
             rigidbody.velocity = projectedVelocity;
 
-            animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0, isSprinting);
+            animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0, playerManager.isSprinting);
 
             if(animatorHandler.canRotate == true){
                 HandleRotation(delta);
