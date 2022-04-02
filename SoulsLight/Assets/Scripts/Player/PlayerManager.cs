@@ -14,11 +14,8 @@ namespace JH
         [Header("Player Flags")]
         public bool isInteracting;
         public bool isSprinting;
-
-        // private void Start()
-        // {
-        //      cameraHandler = CameraHandler.singleton;
-        // }
+        public bool isInAir;
+        public bool isGrounded;
 
         void Start()
         {
@@ -39,6 +36,8 @@ namespace JH
             playerLocomotion.HandleMovement(delta);
 
             playerLocomotion.HandleRollingAndSprinting(delta);
+
+            playerLocomotion.HandleFalling(delta, playerLocomotion.moveDirection);
         }
 
         private void FixedUpdate()
@@ -58,6 +57,9 @@ namespace JH
             inputHandler.rollFlag = false;
             inputHandler.sprintFlag = false;
 
+            if(isInAir) {
+                playerLocomotion.inAirTimer = playerLocomotion.inAirTimer + Time.deltaTime;
+            }
         }
     }
 }
