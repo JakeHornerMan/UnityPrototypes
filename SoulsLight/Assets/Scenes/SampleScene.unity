@@ -606,7 +606,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4257070934043900287, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_Height
-      value: 1.5
+      value: 1.8762959
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900287, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_Radius
@@ -618,15 +618,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900287, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_Center.y
-      value: 1.0889766
+      value: 0.93814796
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900544, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 4257070934043900546, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
-      propertyPath: groundDetectionRayStartPoint
-      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900547, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_RootOrder
