@@ -15,11 +15,6 @@ namespace JH
         public bool isInteracting;
         public bool isSprinting;
 
-        // private void Start()
-        // {
-        //      cameraHandler = CameraHandler.singleton;
-        // }
-
         void Start()
         {
             cameraHandler = CameraHandler.singleton;

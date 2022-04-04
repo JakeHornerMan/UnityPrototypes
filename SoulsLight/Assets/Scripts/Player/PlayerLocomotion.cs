@@ -65,15 +65,18 @@ namespace JH
                 speed = movementSpeed;
             }
 
-            if(inputHandler.sprintFlag){
+            if(inputHandler.sprintFlag && inputHandler.vertical != 0 && inputHandler.horizontal != 0){
                 speed = sprintSpeed;
                 playerManager.isSprinting = true;
             }
 
             moveDirection *= speed;
 
-            Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
-            rigidbody.velocity = projectedVelocity;
+            //Vector3 projectedVelocity = Vector3.ProjectOnPlane(moveDirection, normalVector);
+            //rigidbody.velocity = projectedVelocity;
+            Vector3 movementVelocity = moveDirection;
+            rigidbody.velocity = movementVelocity;
+
 
             animatorHandler.UpdateAnimatorValues(inputHandler.moveAmount, 0, playerManager.isSprinting);
 
