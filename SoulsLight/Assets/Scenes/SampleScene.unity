@@ -626,7 +626,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900546, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: groundDetectionRayStartPoint
-      value: -0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4257070934043900547, guid: b06aee184f792e0468ed3b9960f77cb4, type: 3}
       propertyPath: m_RootOrder
